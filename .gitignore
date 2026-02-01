@@ -1,0 +1,63 @@
+# Python 相关
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv
+
+# 环境变量和敏感信息
+.env
+.env.local
+*.key
+
+# IDE 配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志文件
+*.log
+logs/*.log
+
+# 数据文件（可选择性提交）
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.db
+*.sqlite
+
+# 临时文件
+*.tmp
+*.bak
+*.backup
+.DS_Store
+Thumbs.db
+git_usage_guide.md
+
+# 实验结果（可根据需要调整）
+data/results/*/
+!data/results/.gitkeep
+
+# Jupyter Notebook 检查点
+.ipynb_checkpoints/
+
+# 测试覆盖率报告
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# 构建产物
+build/
+dist/
+*.egg-info/
