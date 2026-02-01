@@ -1,4 +1,4 @@
-# ECHO - Evolving Cognitive Hierarchy for Observation
+# ECHO - Fact Checking
 
 <div align="center">
 

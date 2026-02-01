@@ -1,4 +1,4 @@
-# ECHO - 演化认知层级观察系统
+# ECHO - 事实核查
 
 <div align="center">
 
