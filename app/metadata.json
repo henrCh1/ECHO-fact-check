@@ -1,0 +1,5 @@
+{
+  "name": "ECHO Fact Check",
+  "description": "AI-powered fact-checking system with static and evolving verification modes.",
+  "requestFramePermissions": []
+}
