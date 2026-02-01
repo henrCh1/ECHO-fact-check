@@ -1,0 +1,40 @@
+{
+  "case_id": "case_20240723_103000",
+  "claim": "America officially declares war against Iram",
+  "verdict": "False",
+  "confidence": 1.0,
+  "reasoning": "The claim that 'America officially declares war against Iram' is false. Assuming 'Iram' is a misspelling of 'Iran', there is no record of the United States having officially declared war on Iran. Under the U.S. Constitution, the power to declare war rests solely with the U.S. Congress. The last time the U.S. Congress formally declared war was during World War II against several Axis powers. While the United States has engaged in military actions and maintained significant tensions with Iran, including sanctions and occasional skirmishes, these actions have not constituted an official declaration of war. Furthermore, a search for an entity named 'Iram' against which the U.S. has declared war yields no results, reinforcing the conclusion that the claim is baseless.",
+  "evidence": [
+    {
+      "source": "U.S. Constitution, Article I, Section 8",
+      "content": "The U.S. Constitution grants Congress the sole power to declare war. This constitutional provision outlines the legal framework for formal declarations of war by the United States.",
+      "credibility": "high"
+    },
+    {
+      "source": "Congressional Research Service reports / U.S. House of Representatives archives",
+      "content": "Historical records confirm that the last formal declarations of war by the United States Congress occurred during World War II. Since then, numerous military engagements have taken place under congressional authorizations for the use of military force (AUMFs) or other resolutions, but not through official declarations of war. There is no record of a formal declaration of war against Iran (or 'Iram').",
+      "credibility": "high"
+    },
+    {
+      "source": "Major international news outlets (e.g., Reuters, Associated Press, New York Times)",
+      "content": "No reputable news organization has reported an official declaration of war by the United States against Iran or any other nation in recent decades. Such a significant geopolitical event would be front-page news globally.",
+      "credibility": "high"
+    },
+    {
+      "source": "U.S. Department of State official statements and press briefings",
+      "content": "Official communications from the U.S. Department of State consistently outline diplomatic and economic pressures, as well as responses to specific incidents involving Iran, but do not mention any declaration of war.",
+      "credibility": "high"
+    }
+  ],
+  "used_rules": [
+    "shr-00043",
+    "shr-00074",
+    "shr-00004",
+    "shr-00049",
+    "shr-00058"
+  ],
+  "rule_match_quality": "high",
+  "process_trace": null,
+  "timestamp": "2026-02-01 19:43:48.401854",
+  "mode": "static"
+}

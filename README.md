@@ -1,239 +1,352 @@
-# 事实核查自改进系统
+# ECHO - Evolving Cognitive Hierarchy for Observation
 
-基于大语言模型(LLM)的事实核查系统，具有**自我改进**能力。系统通过Generator-Reflector-Curator三阶段循环，能够从人类反馈中学习并动态更新规则库。
+<div align="center">
 
-## 🌟 核心创新
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Python](https://img.shields.io/badge/python-3.10+-green)
+![License](https://img.shields.io/badge/license-MIT-orange)
 
-- **动态规则库(Playbook)**: 从5条初始规则逐步演化
-- **自改进循环**: Generator → Reflector → Curator → 规则更新
-- **完整可解释性**: 每次判断都记录使用的规则ID
-- **版本控制**: 规则库演化过程完整可追溯
+**An AI-Powered Fact-Checking System with Self-Evolving Rule Base**
 
-## 📁 项目结构
+[English](README.md) | [中文](README_CN.md)
+
+</div>
+
+---
+
+## 📖 Overview
+
+ECHO is an advanced fact-checking system that combines Large Language Models (LLMs) with an evolving rule-based memory system. Unlike traditional fact-checkers, ECHO learns from each verification, continuously improving its detection capabilities through supervised and self-reflection mechanisms.
+
+### ✨ Key Features
+
+- 🧠 **Dual Memory Architecture**: Separate Detection Memory (for false claims) and Trust Memory (for verified truths)
+- 🔄 **Self-Evolving Rules**: System learns and generates new rules from verification experience
+- 🤖 **Multi-Agent Pipeline**: Specialized agents for planning, investigation, and judgment
+- 🎯 **Warmup Learning**: Pre-train on labeled datasets to bootstrap the rule base
+- 🌐 **Web Interface**: Modern React-based frontend for easy interaction
+- 📊 **Real-time Progress**: Step-by-step verification progress tracking
+- 📚 **Rule Transparency**: Expandable rule details with full IF-THEN logic
+
+---
+
+## 🏗️ System Architecture
 
 ```
-fact_check_system/
-├── config/                 # 配置模块
-│   ├── __init__.py
-│   └── settings.py
-├── data/                   # 数据存储
-│   ├── playbook/          # 规则库
-│   ├── cases/             # 案例日志
-│   └── feedback/          # 反馈记录
-├── agents/                # 三个核心Agent
-│   ├── generator.py       # AgentA: 事实核查生成器
-│   ├── reflector.py       # AgentB: 反思器
-│   └── curator.py         # AgentC: 整编器
-├── tools/                 # 工具模块
-│   ├── search_tool.py     # 网络搜索
-│   └── playbook_tool.py   # Playbook操作
-├── prompts/               # Prompt模板
-├── schemas/               # 数据模型
-│   ├── playbook.py        # 规则库数据结构
-│   ├── verdict.py         # 裁决输出结构
-│   └── feedback.py        # 反馈结构
-├── utils/                 # 工具函数
-│   ├── playbook_manager.py
-│   └── logger.py
-├── main.py                # 主程序
-├── demo.py                # 快速演示
-└── requirements.txt
+┌─────────────────────────────────────────────────────────────────┐
+│                         ECHO System                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐          │
+│  │  Generator  │───▶│  Reflector  │───▶│   Curator   │          │
+│  │   Agent     │    │    Agent    │    │    Agent    │          │
+│  └─────────────┘    └─────────────┘    └─────────────┘          │
+│         │                  │                  │                  │
+│         ▼                  ▼                  ▼                  │
+│  ┌─────────────────────────────────────────────────┐            │
+│  │              Playbook (Rule Base)                │            │
+│  │  ┌─────────────────┐  ┌─────────────────┐       │            │
+│  │  │Detection Memory │  │  Trust Memory   │       │            │
+│  │  │(False patterns) │  │(Truth patterns) │       │            │
+│  │  └─────────────────┘  └─────────────────┘       │            │
+│  └─────────────────────────────────────────────────┘            │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## 🚀 快速开始
+### Core Agents
 
-### 1. 环境准备
+| Agent | Role | Description |
+|-------|------|-------------|
+| **Generator** | Fact-Checker | Executes verification using Planner→Investigator→Judge pipeline |
+| **Reflector** | Self-Reflection | Analyzes verification results and generates insights |
+| **Curator** | Rule Manager | Creates, updates, and manages rules based on insights |
+
+### Verification Pipeline (Generator Agent)
+
+1. **Planner**: Extracts claims, selects relevant rules, generates search strategies
+2. **Investigator**: Executes searches, gathers evidence, assesses credibility
+3. **Judge**: Synthesizes evidence, applies rules, renders final verdict
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.10+
+- Node.js 18+ (for web interface)
+- Google API Key (for Gemini LLM)
+
+### Installation
 
 ```bash
-# 克隆项目（或创建目录）
-mkdir fact_check_system
-cd fact_check_system
+# Clone repository
+git clone https://github.com/yourusername/ECHO-fact-checking.git
+cd ECHO-fact-checking
 
-# 创建虚拟环境
+# Create virtual environment
 python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# or: .\venv\Scripts\activate  # Windows
 
-# 激活虚拟环境
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
+# Install dependencies
+pip install -r requirements_all_branches.txt
 
-# 安装依赖
-pip install -r requirements.txt
+# Configure environment
+cp .env.template .env
+# Edit .env and add your GOOGLE_API_KEY
 ```
 
-### 2. 配置API密钥
+### Configuration
 
-创建 `.env` 文件：
+Create a `.env` file with the following:
+
+```env
+GOOGLE_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+---
+
+## 💻 Usage
+
+### Web Application (Recommended)
+
+**One-Click Launch:**
+
+```powershell
+# Windows PowerShell (Recommended)
+.\start.ps1
+
+# Windows CMD
+.\start.bat
+```
+
+**Access Points:**
+- Frontend: http://localhost:3000
+- API Documentation: http://localhost:8000/docs
+
+### Command Line Interface
+
+**Single Claim Verification:**
 
 ```bash
-# 必需：Google Gemini API
-GOOGLE_API_KEY=your_google_api_key_here
+# Interactive mode
+python single_check.py
 
-# 可选：模型选择（默认使用gemini-2.0-flash-exp）
-GEMINI_MODEL=gemini-2.0-flash-exp
-
-# 可选：搜索API（不配置将使用模拟搜索）
-SERPAPI_KEY=your_serpapi_key_here
+# Direct verification
+python single_check.py --claim "Company X declared bankruptcy in January 2026"
 ```
 
-**获取API密钥:**
-- Google Gemini: https://makersuite.google.com/app/apikey
-- SerpAPI (可选): https://serpapi.com/
+**Warmup Training:**
 
-### 3. 运行演示
+Train the system on a labeled dataset to bootstrap rules:
 
 ```bash
-# 快速演示（推荐首次运行）
-python demo.py
-
-# 完整交互式程序
-python main.py
+python -m warmup.warmup_main
 ```
 
-## 📖 使用说明
+The warmup dataset should be a CSV with columns:
+- `Statement`: The claim text
+- `Rating`: True/False label
+- `Full_Analysis`: Ground truth analysis
 
-### Demo模式
+**Benchmark Evaluation:**
 
 ```bash
-python demo.py
+python benchmark_main.py --dataset data/test_dataset.csv
 ```
 
-选择：
-- **选项1 - 简单演示**: 运行一个完整的自改进循环
-- **选项2 - 批量演示**: 运行3个案例，观察规则库演化
+---
 
-### 完整模式
+## 🌐 Web Interface Features
 
-```bash
-python main.py
+### 🏠 Home Page
+- Single claim input with mode selection (Static/Evolving)
+- **Real-time progress indicator** with step tracking:
+  - 提取关键声明 (Extract Claims)
+  - 搜集证据 (Gather Evidence)
+  - 分析判断 (Analyze & Judge)
+  - 生成报告 (Generate Report)
+  - 规则演化 (Rule Evolution - Evolving mode only)
+- Batch CSV upload with drag-and-drop
+
+### 📊 Result Page
+- Detailed verdict with confidence score
+- Evidence display with credibility ratings
+- AI reasoning explanation
+- **Expandable rule details** - Click any rule to view:
+  - Rule type and memory type
+  - Full description
+  - IF-THEN condition and action
+  - Confidence and evidence count
+- Investigation process trace
+
+### 📚 History Page
+- Searchable verification history
+- Filter by verdict, mode, confidence
+- Delete functionality
+
+### 📖 Playbook Page
+- Detection and Trust memory tabs
+- Rule browsing with metrics
+- Playbook version tracking
+
+### 📈 Statistics Dashboard
+- Total verifications count
+- True/False distribution chart
+- Mode usage analytics
+- Average confidence metrics
+
+---
+
+## 🔌 API Reference
+
+### Verification Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/verify` | Verify single claim |
+| POST | `/api/verify/batch` | Upload CSV for batch verification |
+| GET | `/api/verify/batch/{task_id}` | Get batch task status |
+| GET | `/api/verify/batch/{task_id}/download` | Download batch results |
+
+### History Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/history` | List verification history |
+| GET | `/api/history/{case_id}` | Get verification details |
+| DELETE | `/api/history/{case_id}` | Delete history record |
+
+### Playbook Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/playbook` | Get playbook status |
+| GET | `/api/playbook/rules` | List all rules |
+| GET | `/api/playbook/rules/{rule_id}` | Get rule details |
+| POST | `/api/playbook/switch` | Switch active playbook |
+
+### Warmup Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/warmup/upload` | Upload warmup dataset |
+| POST | `/api/warmup/start` | Start warmup training |
+| GET | `/api/warmup/{task_id}` | Get warmup status |
+
+---
+
+## 🎯 Verification Modes
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| **Static** | Uses existing rules only | Fast verification, production use |
+| **Evolving** | Triggers rule evolution after verification | Learning mode, improves over time |
+
+---
+
+## 📁 Project Structure
+
+```
+ECHO-fact-checking/
+├── agents/                 # Core AI agents
+│   ├── generator.py       # Main verification agent
+│   ├── reflector.py       # Self-reflection agent
+│   └── curator.py         # Rule curation agent
+├── warmup/                 # Warmup training system
+│   ├── warmup_main.py     # Warmup entry point
+│   └── agents/            # Warmup-specific agents
+├── api/                    # FastAPI backend
+│   ├── main.py            # API entry point
+│   ├── routers/           # API endpoints
+│   ├── services/          # Business logic
+│   └── schemas/           # Pydantic models
+├── app/                    # React frontend
+│   ├── pages/             # Page components
+│   ├── components/        # UI components
+│   └── services/          # API client
+├── utils/                  # Utilities
+│   └── playbook_manager.py # Rule base management
+├── schemas/                # Pydantic data models
+├── prompts/                # LLM prompt templates
+├── config/                 # Configuration
+├── data/                   # Data directory
+│   └── playbook/          # Rule base storage
+├── single_check.py        # Single claim verification CLI
+├── benchmark_main.py      # Batch evaluation script
+├── start.ps1              # PowerShell startup script
+└── start.bat              # Windows batch startup script
 ```
 
-选择：
-- **选项1 - 交互模式**: 手动输入待核查信息并提供反馈
-- **选项2 - 批量模式**: 自动运行预设案例
+---
 
-## 🔄 工作流程
+## 🛠️ Technology Stack
 
-```
-1. [输入] 待核查信息
-   ↓
-2. [AgentA Generator] 
-   - 提取声明
-   - 检索证据（可调用搜索工具）
-   - 生成裁决 + 详细日志
-   ↓
-3. [人类反馈]
-   - 标注正确答案
-   - 标注反馈类型
-   ↓
-4. [AgentB Reflector]
-   - 对比分析
-   - 诊断错误原因
-   - 提炼关键洞见
-   ↓
-5. [AgentC Curator]
-   - 将洞见转化为规则更新
-   - 生成Delta增量
-   ↓
-6. [Playbook更新]
-   - 应用增量更新
-   - 保存历史版本
-   ↓
-7. [循环] 使用更新后的规则库处理下一个案例
-```
+### Backend
+- **Framework**: FastAPI
+- **LLM**: Google Gemini (langchain-google-genai)
+- **Data Validation**: Pydantic
+- **Search**: Google Search API / SerpAPI
 
-## 📊 规则库演化示例
+### Frontend
+- **Framework**: React 19 + TypeScript
+- **Build Tool**: Vite 6
+- **Styling**: Custom CSS utilities
+- **Charts**: Recharts
+- **Icons**: Lucide React
+- **Routing**: React Router DOM
 
-```
-初始状态 (v1.0):
-- 5条元规则
-- 准确率: ~60%
+---
 
-迭代3次后 (v1.3):
-- 8-10条规则
-- 准确率: ~75%
+## 📝 Rule Base Format
 
-迭代10次后 (v1.10):
-- 15+条规则
-- 准确率: >85%
+Rules are stored as IF-THEN conditions:
+
+```json
+{
+  "rule_id": "det-00123",
+  "type": "strategy",
+  "condition": "IF claim_contains=financial_data AND source_type=social_media",
+  "action": "Cross-verify with official financial databases",
+  "confidence": 0.85,
+  "evidence_count": 23,
+  "memory_type": "detection"
+}
 ```
 
-## 🔧 高级配置
+---
 
-### 自定义测试案例
+## 🤝 Contributing
 
-编辑 `main.py` 中的 `test_cases` 列表：
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-```python
-test_cases = [
-    "你的自定义待核查信息1",
-    "你的自定义待核查信息2",
-    # ...
-]
-```
-
-### 调整模型参数
-
-编辑 `config/settings.py`:
-
-```python
-TEMPERATURE = 0.1       # 降低温度提高稳定性
-MAX_TOKENS = 4096       # 调整输出长度
-```
-
-### 查看规则库演化
-
-```bash
-# 查看当前规则库
-cat data/playbook/current.json
-
-# 查看历史版本
-ls data/playbook/history/
-
-# 查看案例日志
-ls data/cases/
-```
-
-## 📈 验证指标
-
-系统成功运行的标志：
-
-- ✅ Playbook规则数从5条增长到15+条
-- ✅ 每条新规则都有`created_from`字段（可追溯来源）
-- ✅ 历史版本完整保存在`history/`目录
-- ✅ 裁决输出包含`used_rules`（展示使用了哪些规则）
-- ✅ 准确率随迭代次数提升
-
-## ⚠️ 常见问题
-
-### Q: API调用失败
-
-**检查:**
-1. `.env`文件中的`GOOGLE_API_KEY`是否正确
-2. API密钥是否有足够的配额
-3. 网络连接是否正常
-
-### Q: JSON解析错误
-
-**原因:** Gemini模型输出格式不稳定
-
-**解决:** 系统已内置容错机制，会自动使用默认值
-
-### Q: 搜索功能不可用
-
-**正常情况:** 如果未配置搜索API，系统会使用模拟搜索（demo用）
-
-**配置真实搜索:** 在`.env`中添加`SERPAPI_KEY`
-
-## 🤝 贡献
-
-欢迎提交Issue和Pull Request！
+---
 
 ## 📄 License
 
-MIT License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📮 联系
+---
 
-如有问题请提交Issue
+## 🙏 Acknowledgments
+
+- Google Gemini for LLM capabilities
+- LangChain for AI orchestration framework
+- The open-source fact-checking research community
+
+---
+
+<div align="center">
+
+**Built with ❤️ for truth in the age of misinformation**
+
+[⬆ Back to Top](#echo---evolving-cognitive-hierarchy-for-observation)
+
+</div>

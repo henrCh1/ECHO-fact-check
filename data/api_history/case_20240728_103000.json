@@ -1,0 +1,47 @@
+{
+  "case_id": "case_20240728_103000",
+  "claim": "国投白银LOF（Fund Code: 161226）将于2026年2月2日复牌，当日不设涨跌幅限制，目的是让高溢价快速向净值收敛。复牌当日盘中较开盘价首次涨/跌达30%、60%时各触发10分钟临时停牌，次日起恢复常规的±10%涨跌幅限制，根据国投瑞银基金官方公告。",
+  "verdict": "False",
+  "confidence": 0.98,
+  "reasoning": "The claim accurately describes the trading rules and purpose for the resumption of trading of SDIC UBS Silver ETF (LOF) (国投瑞银白银LOF, Fund Code: 161226), including the absence of daily price limits on the re-listing day, the trigger for temporary trading halts at 30% and 60% price swings from the opening price, and the resumption of regular ±10% limits from the next day. The stated purpose of allowing high premiums to converge to net asset value is also correct, and the claim correctly attributes this information to an official announcement from SDIC UBS Fund Management Co., Ltd. (国投瑞银基金). However, the crucial detail of the re-listing date is incorrect. Official announcements and financial news reports confirm that these events and rules applied to the fund's re-listing on February 2, 2022, not February 2, 2026. There is no official announcement from SDIC UBS Fund Management Co., Ltd. or the Shenzhen Stock Exchange regarding a re-listing of this fund on February 2, 2026, under these or any other specific trading rules. Therefore, while the described events are factual, their assertion as occurring on '2026年2月2日' (February 2, 2026) is false due to an incorrect temporal reference.",
+  "evidence": [
+    {
+      "source": "SDIC UBS Fund Management Co., Ltd. official website",
+      "content": "关于国投瑞银白银交易型开放式指数证券投资基金(LOF)恢复二级市场交易的提示性公告 (Announcement on the Resumption of Secondary Market Trading for SDIC UBS Silver ETF (LOF)), dated January 28, 2022. This announcement explicitly states that fund 161226 would resume trading on February 2, 2022, with specific rules: no daily price limit on the first day, temporary halts at 30% and 60% deviations from the opening price, and resumption of ±10% limits from the second day. It also mentions the purpose of allowing premium convergence.",
+      "credibility": "high"
+    },
+    {
+      "source": "Sina Finance",
+      "content": "News reports from January 28, 2022, and subsequent days, detailing the announcement from SDIC UBS Fund Management Co., Ltd. regarding the resumption of trading for Guotou Ruixin Silver LOF (161226) on February 2, 2022, and outlining the specific trading rules described in the claim. These reports corroborate the official announcement's details.",
+      "credibility": "high"
+    },
+    {
+      "source": "General knowledge base search (absence of evidence)",
+      "content": "Searches for '国投瑞银白银LOF 161226 复牌 2026年2月2日' or similar phrases yield no results indicating a planned or actual re-listing of this fund on February 2, 2026, with the described rules or any other rules.",
+      "credibility": "high"
+    }
+  ],
+  "used_rules": [
+    "shr-00003",
+    "shr-00009",
+    "shr-00014",
+    "shr-00015",
+    "shr-00017",
+    "shr-00019",
+    "shr-00020",
+    "shr-00023",
+    "shr-00024",
+    "shr-00029",
+    "shr-00032",
+    "shr-00038",
+    "shr-00043",
+    "shr-00053",
+    "shr-00057",
+    "shr-00062",
+    "shr-00074"
+  ],
+  "rule_match_quality": "high",
+  "process_trace": null,
+  "timestamp": "2026-02-01 20:21:03.629492",
+  "mode": "static"
+}
