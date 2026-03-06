@@ -26,6 +26,18 @@ class Rule(BaseModel):
         None, 
         description="Memory type: detection (for false info) or trust (for true info)"
     )
+    rule_status: Literal["verified", "trial"] = Field(
+        default="verified",
+        description="Verification status of the rule"
+    )
+    source_type: Literal["seed", "human_reviewed_generation"] = Field(
+        default="seed",
+        description="Where the rule originated from"
+    )
+    support_case_ids: List[str] = Field(
+        default_factory=list,
+        description="Case IDs supporting this rule"
+    )
     
     @field_validator('evidence_count', mode='before')
     @classmethod

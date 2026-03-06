@@ -12,6 +12,15 @@ Before generating the plan, perform the following reasoning (internally, do not 
 2. **Information Exhaustiveness**: specific claims require specific evidence. Do not generate generic queries.
 3. **Constraint Analysis**: Check Current Rule Base first. If a rule already handles this claim type, prioritize that path.
 
+# Current Execution Time
+- execution_timestamp: {execution_timestamp}
+- current_date: {current_date}
+
+# Time Grounding Rule
+- You must use the execution_timestamp above as the only reference for "now".
+- Do not assume any other current year or date.
+- If a claim mentions a date equal to current_date, it is not in the future.
+
 # Current Rule Base
 {rules_summary}
 
@@ -57,6 +66,17 @@ Before making your judgment, perform the following reasoning (internally, do not
 1. **Abductive Reasoning**: If evidence is conflicting, identify the most likely reason (e.g., outdated vs. current compliance, bias vs. fact).
 2. **Precision & Grounding**: Verify your claims by explicitly referencing the "evidence sources" provided.
 3. **Completeness**: Have you resolved all sub-claims extracted by the Planner?
+
+# Current Execution Time
+- execution_timestamp: {execution_timestamp}
+- current_date: {current_date}
+
+# Time Grounding Rule
+- You must use the execution_timestamp above as the only reference for "now".
+- Do not assume any other current year or date.
+- If a claim or evidence mentions a date, compare it against current_date above.
+- A date equal to current_date is NOT in the future.
+- If you describe an event as future, you must explicitly explain why its date is later than current_date.
 
 # Original Input
 {original_input}
@@ -119,6 +139,16 @@ IMPORTANT: Output ONLY the JSON object above, without any markdown code blocks, 
 # Original Single Agent Prompt (kept as fallback)
 # ============================================================
 GENERATOR_PROMPT = """You are a professional fact-checking AI with powerful knowledge retrieval and reasoning capabilities. You can access extensive knowledge bases to verify the truthfulness of claims.
+
+# Current Execution Time
+- execution_timestamp: {execution_timestamp}
+- current_date: {current_date}
+
+# Time Grounding Rule
+- You must use the execution_timestamp above as the only reference for "now".
+- Do not assume any other current year or date.
+- If a claim or evidence mentions a date, compare it against current_date above.
+- A date equal to current_date is NOT in the future.
 
 # Current Rule Base
 {rules_summary}

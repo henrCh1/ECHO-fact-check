@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![版本](https://img.shields.io/badge/版本-1.0.0-blue)
+![版本](https://img.shields.io/badge/版本-2.0.0-blue)
 ![Python](https://img.shields.io/badge/python-3.10+-green)
 ![许可证](https://img.shields.io/badge/许可证-MIT-orange)
 
@@ -13,6 +13,21 @@
 </div>
 
 ---
+
+## Changelog
+
+### v2.0.0
+
+- 新增 human-in-the-loop 演化流程：演化模式下的案例先进入 `PendingBuffer`，累计 3 条后再集中请求用户反馈。
+- 新增双级规则标签：`Verified` 表示可信规则，`Trial` 表示基于反馈生成的试用规则，并在提示词和前端界面中显式展示。
+- 新增批量反馈 API 与前端反馈弹窗，用户可以对缓冲案例逐条标记“判断是否正确”“推理过程是否正确”。
+- 演化模式改为“先缓冲、后监督式更新”，仅在用户提交反馈后才执行 `WarmupReflector -> Curator -> apply_update`。
+- 在规则库页和结果页中新增 `Trial/Verified` 标识。
+- 兼容新版 Gemini 返回结构，统一规范化非字符串类型的 `response.content`。
+- 在提示词中显式注入运行时日期，修复近期事件被错误判断为“未来事件”的问题。
+- 新增前端运行时设置：支持在设置页填写 Gemini API Key 和模型名，并通过新的 `/api/settings` 接口持久化到 `.env`。
+- 默认模型调整为 `gemini-3-flash-preview`。
+- 系统公开版本号从 `1.0.0` 升级到 `2.0.0`。
 
 ## 📖 概述
 
@@ -104,7 +119,7 @@ cp .env.template .env
 
 ```env
 GOOGLE_API_KEY=你的_gemini_api_密钥
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3-flash-preview
 ```
 
 ---

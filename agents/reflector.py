@@ -8,6 +8,7 @@ import json
 from schemas.verdict import Verdict
 from config.settings import Settings
 from prompts.reflector_prompt import REFLECTOR_PROMPT
+from utils.llm_response import content_to_text, extract_json_text
 
 class KeyInsight(BaseModel):
     """Key insight output from Reflector"""
@@ -49,16 +50,7 @@ class ReflectorAgent:
         
         # Parse output
         try:
-            content = response.content
-            
-            # Clean markdown wrapper
-            if "```json" in content:
-                json_str = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                json_str = content.split("```")[1].split("```")[0].strip()
-            else:
-                json_str = content.strip()
-            
+            json_str = extract_json_text(response.content)
             insight_data = json.loads(json_str)
             insight = KeyInsight(**insight_data)
             
@@ -75,7 +67,7 @@ class ReflectorAgent:
             
         except json.JSONDecodeError as e:
             print(f"❌ JSON parsing failed: {e}")
-            print(f"Raw output:\n{response.content}")
+            print(f"Raw output:\n{content_to_text(response.content)}")
             
             # Return default insight
             return KeyInsight(
@@ -88,5 +80,5 @@ class ReflectorAgent:
             
         except Exception as e:
             print(f"❌ Reflection failed: {e}")
-            print(f"Raw output: {response.content}")
+            print(f"Raw output: {content_to_text(response.content)}")
             raise

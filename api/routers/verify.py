@@ -25,7 +25,7 @@ async def verify_claim(request: VerifyRequest):
     - **claim**: The claim text to verify
     - **mode**: 
         - `static`: Use existing rules only (faster, no rule evolution)
-        - `evolving`: Trigger rule evolution after verification (learning mode)
+        - `evolving`: Buffer the case for batched human review before rule evolution
     """
     try:
         result = verification_service.verify_claim(

@@ -88,6 +88,9 @@ const Playbook: React.FC = () => {
                    <Badge variant={rule.type === 'strategy' ? 'blue' : rule.type === 'pitfall' ? 'warning' : 'neutral'}>
                      {rule.type}
                    </Badge>
+                   <Badge variant={rule.rule_status === 'trial' ? 'warning' : 'success'}>
+                     {rule.rule_status === 'trial' ? 'Trial' : 'Verified'}
+                   </Badge>
                 </div>
                 <p className="text-sm text-gray-600">{rule.description}</p>
                 

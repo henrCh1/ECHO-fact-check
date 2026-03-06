@@ -77,7 +77,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span className="ml-2 text-xs font-medium text-gray-500">系统运行中</span>
           </div>
-          <p className="mt-1 text-xs text-gray-400">v1.0.0 • 本地环境</p>
+          <p className="mt-1 text-xs text-gray-400">v2.0.0 • 本地环境</p>
         </div>
       </aside>
 

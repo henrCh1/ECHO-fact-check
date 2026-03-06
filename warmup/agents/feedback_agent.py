@@ -7,6 +7,7 @@ from typing import Dict, Any
 from schemas.verdict import Verdict
 from warmup.schemas.feedback import HumanFeedback
 from config.settings import Settings
+from utils.llm_response import content_to_text, extract_json_text
 
 
 class FeedbackAgent:
@@ -104,16 +105,7 @@ Please begin analysis and output feedback:
         
         # Parse output
         try:
-            content = response.content
-            
-            # Clean markdown wrapper
-            if "```json" in content:
-                json_str = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                json_str = content.split("```")[1].split("```")[0].strip()
-            else:
-                json_str = content.strip()
-            
+            json_str = extract_json_text(response.content)
             # Sanitize JSON string to handle unescaped control characters
             json_str = self._sanitize_json_string(json_str)
             
@@ -156,7 +148,7 @@ Please begin analysis and output feedback:
             
         except json.JSONDecodeError as e:
             print(f"JSON parsing failed: {e}")
-            print(f"Raw output:\n{response.content}")
+            print(f"Raw output:\n{content_to_text(response.content)}")
             
             # Return default feedback
             return HumanFeedback(
@@ -169,7 +161,7 @@ Please begin analysis and output feedback:
             
         except Exception as e:
             print(f"Failed to generate feedback: {e}")
-            print(f"Raw output: {response.content}")
+            print(f"Raw output: {content_to_text(response.content)}")
             raise
     
     def _sanitize_json_string(self, json_str: str) -> str:

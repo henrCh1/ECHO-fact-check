@@ -243,6 +243,9 @@ const Result: React.FC = () => {
                           }>
                             {rule.type}
                           </Badge>
+                          <Badge variant={rule.rule_status === 'trial' ? 'warning' : 'success'}>
+                            {rule.rule_status === 'trial' ? 'Trial' : 'Verified'}
+                          </Badge>
                           {rule.memory_type && (
                             <Badge variant={rule.memory_type === 'detection' ? 'danger' : 'success'}>
                               {rule.memory_type === 'detection' ? '检测记忆' : '信任记忆'}

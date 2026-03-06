@@ -9,6 +9,7 @@ from schemas.verdict import Verdict
 from warmup.schemas.feedback import HumanFeedback
 from warmup.prompts.warmup_reflector_prompt import WARMUP_REFLECTOR_PROMPT
 from config.settings import Settings
+from utils.llm_response import content_to_text, extract_json_text
 
 
 class WarmupKeyInsight(BaseModel):
@@ -59,16 +60,7 @@ class WarmupReflectorAgent:
         
         # Parse output
         try:
-            content = response.content
-            
-            # Clean markdown wrapper
-            if "```json" in content:
-                json_str = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                json_str = content.split("```")[1].split("```")[0].strip()
-            else:
-                json_str = content.strip()
-            
+            json_str = extract_json_text(response.content)
             insight_data = json.loads(json_str)
             
             # Map Chinese error types to English if needed
@@ -106,7 +98,7 @@ class WarmupReflectorAgent:
             
         except json.JSONDecodeError as e:
             print(f"JSON parsing failed: {e}")
-            print(f"Raw output:\n{response.content}")
+            print(f"Raw output:\n{content_to_text(response.content)}")
             
             # Return default insight, set intent based on ground_truth
             default_intent = "trust" if feedback.ground_truth == "True" else "detection"
@@ -121,5 +113,5 @@ class WarmupReflectorAgent:
             
         except Exception as e:
             print(f"Reflection failed: {e}")
-            print(f"Raw output: {response.content}")
+            print(f"Raw output: {content_to_text(response.content)}")
             raise

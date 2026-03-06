@@ -3,6 +3,8 @@ from pydantic import BaseModel, Field
 from typing import Literal, List, Optional
 from datetime import datetime
 
+from api.schemas.evolution import EvolutionMetaResponse
+
 
 class EvidenceResponse(BaseModel):
     """Evidence in response"""
@@ -40,6 +42,7 @@ class VerifyResponse(BaseModel):
     process_trace: Optional[ProcessTraceResponse] = None
     timestamp: datetime
     mode: str = "static"
+    evolution_meta: Optional[EvolutionMetaResponse] = None
     
     class Config:
         from_attributes = True

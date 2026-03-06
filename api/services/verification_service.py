@@ -6,12 +6,12 @@ from typing import Optional, Literal
 import uuid
 
 from agents.generator import GeneratorAgent
-from agents.reflector import ReflectorAgent
-from agents.curator import CuratorAgent
+from config.settings import Settings
 from utils.playbook_manager import PlaybookManager
 from schemas.verdict import Verdict
 
 from api.schemas.verify import VerifyResponse, EvidenceResponse, ProcessTraceResponse
+from api.services.evolution_service import EvolutionService
 
 
 class VerificationService:
@@ -28,9 +28,16 @@ class VerificationService:
     def _init_components(self):
         """Initialize or reinitialize agent components"""
         self.playbook_manager = PlaybookManager(playbook_dir=self.playbook_dir)
-        self.generator = GeneratorAgent(playbook_manager=self.playbook_manager)
-        self.reflector = ReflectorAgent()
-        self.curator = CuratorAgent(playbook_manager=self.playbook_manager)
+        self.generator = None
+        if Settings.has_llm_config():
+            self.generator = GeneratorAgent(playbook_manager=self.playbook_manager)
+        self.evolution_service = EvolutionService(playbook_dir=self.playbook_dir)
+
+    def _ensure_generator(self):
+        """Lazily initialize the generator after settings become available."""
+        if self.generator is None:
+            Settings.require_llm_config()
+            self.generator = GeneratorAgent(playbook_manager=self.playbook_manager)
     
     def switch_playbook(self, playbook_dir: str):
         """Switch to a different playbook directory"""
@@ -53,27 +60,18 @@ class VerificationService:
         Returns:
             VerifyResponse with verification result
         """
+        self._ensure_generator()
         # Execute fact-checking
         verdict: Verdict = self.generator.execute(claim)
         
-        # If evolving mode, run the reflection and curation loop
-        if mode == "evolving":
-            try:
-                # Reflect on the verdict
-                insight = self.reflector.reflect(verdict)
-                
-                # Curate: Generate and apply rule updates
-                delta = self.curator.curate(
-                    insight, 
-                    verdict.case_id,
-                    verdict_value=verdict.verdict
-                )
-                self.curator.apply_update(delta)
-            except Exception as e:
-                print(f"Evolution step failed (non-critical): {e}")
-        
         # Build response
         response = self._verdict_to_response(verdict, mode)
+
+        if mode == "evolving":
+            try:
+                response.evolution_meta = self.evolution_service.enqueue_verdict(verdict)
+            except Exception as e:
+                print(f"Evolution buffering failed (non-critical): {e}")
         
         # Save to history
         self._save_to_history(response)

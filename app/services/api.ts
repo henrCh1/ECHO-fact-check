@@ -4,7 +4,11 @@ import {
   Rule, 
   PlaybookStatus, 
   SystemStats,
-  BatchTask
+  BatchTask,
+  PendingReviewResponse,
+  ReviewBatchSubmitResponse,
+  ReviewFeedbackItem,
+  RuntimeSettings
 } from '../types';
 
 // API Base URL - Configure this for your backend
@@ -181,6 +185,55 @@ export const api = {
    */
   getStats: async (): Promise<SystemStats> => {
     return fetchApi<SystemStats>('/api/stats');
+  },
+
+  /**
+   * Get runtime settings
+   */
+  getRuntimeSettings: async (): Promise<RuntimeSettings> => {
+    return fetchApi<RuntimeSettings>('/api/settings');
+  },
+
+  /**
+   * Update runtime settings
+   */
+  updateRuntimeSettings: async (params: {
+    google_api_key?: string;
+    gemini_model: string;
+  }): Promise<RuntimeSettings> => {
+    return fetchApi<RuntimeSettings>('/api/settings', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
+  },
+
+  /**
+   * Get current pending human review batch for evolving mode
+   */
+  getPendingEvolutionBatch: async (): Promise<PendingReviewResponse> => {
+    return fetchApi<PendingReviewResponse>('/api/evolution/pending');
+  },
+
+  /**
+   * Submit human feedback for a review batch
+   */
+  submitEvolutionBatch: async (
+    batchId: string,
+    feedback: ReviewFeedbackItem[]
+  ): Promise<ReviewBatchSubmitResponse> => {
+    return fetchApi<ReviewBatchSubmitResponse>(`/api/evolution/batches/${batchId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({ feedback }),
+    });
+  },
+
+  /**
+   * Defer a review batch for later
+   */
+  skipEvolutionBatch: async (batchId: string): Promise<PendingReviewResponse> => {
+    return fetchApi<PendingReviewResponse>(`/api/evolution/batches/${batchId}/skip`, {
+      method: 'POST',
+    });
   },
 
   /**

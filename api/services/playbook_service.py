@@ -112,8 +112,11 @@ class PlaybookService:
             confidence=rule.confidence,
             evidence_count=rule.evidence_count,
             memory_type=memory_type,
+            rule_status=rule.rule_status,
+            source_type=rule.source_type,
             active=rule.active,
             created_from=rule.created_from,
             created_at=rule.created_at,
-            parent_rule=rule.parent_rule
+            parent_rule=rule.parent_rule,
+            support_case_ids=rule.support_case_ids
         )

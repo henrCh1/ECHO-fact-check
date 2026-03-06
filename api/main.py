@@ -22,6 +22,8 @@ sys.path.insert(0, str(project_root))
 
 from api.routers import (
     verify_router,
+    evolution_router,
+    settings_router,
     playbook_router,
     history_router,
     warmup_router,
@@ -60,11 +62,11 @@ app = FastAPI(
     - **Batch Verification**: Upload CSV files for bulk verification
     - **Dual Verification Modes**: 
         - Static: Use existing rules only (faster)
-        - Evolving: Trigger rule evolution after each verification (learning mode)
+        - Evolving: Buffer cases for batched human feedback before supervised rule updates
     - **Playbook Management**: View and manage verification rules
     - **Warmup**: Generate custom playbooks from labeled datasets
     """,
-    version="1.0.0",
+    version="2.0.0",
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc"
@@ -81,6 +83,8 @@ app.add_middleware(
 
 # Include routers
 app.include_router(verify_router)
+app.include_router(evolution_router)
+app.include_router(settings_router)
 app.include_router(playbook_router)
 app.include_router(history_router)
 app.include_router(warmup_router)
@@ -92,11 +96,13 @@ async def root():
     """API root endpoint"""
     return {
         "name": "ECHO Fact-Checking API",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "status": "running",
         "docs": "/docs",
         "endpoints": {
             "verify": "/api/verify",
+            "evolution": "/api/evolution",
+            "settings": "/api/settings",
             "batch": "/api/verify/batch",
             "playbook": "/api/playbook",
             "history": "/api/history",

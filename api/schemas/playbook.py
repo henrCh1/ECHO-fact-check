@@ -14,10 +14,13 @@ class RuleResponse(BaseModel):
     confidence: float
     evidence_count: int
     memory_type: Optional[Literal["detection", "trust"]] = None
+    rule_status: Literal["verified", "trial"] = "verified"
+    source_type: Literal["seed", "human_reviewed_generation"] = "seed"
     active: bool = True
     created_from: Optional[str] = None
     created_at: Optional[datetime] = None
     parent_rule: Optional[str] = None
+    support_case_ids: List[str] = Field(default_factory=list)
     
     class Config:
         from_attributes = True

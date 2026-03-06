@@ -5,6 +5,7 @@ from datetime import datetime
 from schemas.playbook import Rule, DeltaUpdate
 from agents.reflector import KeyInsight
 from utils.playbook_manager import PlaybookManager
+from utils.llm_response import extract_json_text, preview_content
 from prompts.curator_prompt import CURATOR_PROMPT
 from config.settings import Settings
 
@@ -45,16 +46,7 @@ class CuratorAgent:
         
         # Parse output
         try:
-            content = response.content
-            
-            # Clean markdown wrapper
-            if "```json" in content:
-                json_str = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                json_str = content.split("```")[1].split("```")[0].strip()
-            else:
-                json_str = content.strip()
-            
+            json_str = extract_json_text(response.content)
             delta_data = json.loads(json_str)
             
             # If adding new rule, supplement created_from field and fix invalid type
@@ -103,7 +95,7 @@ class CuratorAgent:
             
         except json.JSONDecodeError as e:
             print(f"JSON parsing failed: {e}")
-            print(f"Raw output:\n{response.content[:500]}...")
+            print(f"Raw output:\n{preview_content(response.content)}")
             
             # Return no_action as fallback
             return DeltaUpdate(
@@ -113,7 +105,7 @@ class CuratorAgent:
             
         except Exception as e:
             print(f"Curation failed: {e}")
-            print(f"Raw output: {response.content[:500]}...")
+            print(f"Raw output: {preview_content(response.content)}")
             
             # Return no_action as fallback instead of raising
             return DeltaUpdate(

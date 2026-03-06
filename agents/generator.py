@@ -15,6 +15,7 @@ from typing import List, Dict, Any
 
 from schemas.verdict import Verdict, Evidence, ProcessTrace
 from utils.playbook_manager import PlaybookManager
+from utils.llm_response import extract_json_text, preview_content
 from prompts.generator_prompt import PLANNER_PROMPT, INVESTIGATOR_PROMPT, JUDGE_PROMPT, GENERATOR_PROMPT
 from config.settings import Settings
 
@@ -80,27 +81,22 @@ class GeneratorAgent:
     
     def _run_planner(self, claim_text: str) -> Dict[str, Any]:
         """Phase 1: Planner - Analyze claims, select rules, generate search queries"""
-        
+        now = datetime.now().astimezone()
+
         # Load only brief rule summary to reduce token usage
         rules_summary = self.playbook_manager.get_rules_brief_summary()
         
         prompt = PLANNER_PROMPT.format(
             rules_summary=rules_summary,
-            input=claim_text
+            input=claim_text,
+            execution_timestamp=now.isoformat(timespec="seconds"),
+            current_date=now.date().isoformat()
         )
         
         response = self.llm.invoke(prompt)
-        content = response.content
-        
         # Parse JSON
         try:
-            if "```json" in content:
-                json_str = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                json_str = content.split("```")[1].split("```")[0].strip()
-            else:
-                json_str = content.strip()
-            
+            json_str = extract_json_text(response.content)
             planner_output = json.loads(json_str)
             return planner_output
             
@@ -218,7 +214,8 @@ class GeneratorAgent:
     
     def _run_judge(self, original_input: str, planner_output: Dict, investigator_output: Dict) -> Verdict:
         """Phase 3: Judge - Synthesize all information and make final judgment"""
-        
+        now = datetime.now().astimezone()
+
         # Build evidence summary
         evidence_items = investigator_output.get("evidence_items", [])
         evidence_summary = ""
@@ -237,21 +234,15 @@ class GeneratorAgent:
             original_input=original_input,
             extracted_claims=json.dumps(planner_output.get("extracted_claims", []), ensure_ascii=False),
             selected_rules=selected_rules_detail,  # Now passing full rule details, not just IDs
-            evidence_summary=evidence_summary
+            evidence_summary=evidence_summary,
+            execution_timestamp=now.isoformat(timespec="seconds"),
+            current_date=now.date().isoformat()
         )
         
         response = self.llm.invoke(prompt)
-        content = response.content
-        
         # Parse JSON
         try:
-            if "```json" in content:
-                json_str = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                json_str = content.split("```")[1].split("```")[0].strip()
-            else:
-                json_str = content.strip()
-            
+            json_str = extract_json_text(response.content)
             verdict_data = json.loads(json_str)
             
             # Ensure case_id exists
@@ -274,7 +265,7 @@ class GeneratorAgent:
             
         except json.JSONDecodeError as e:
             print(f"   ⚠️ Judge JSON parsing failed: {e}")
-            print(f"   Raw output: {content[:500]}...")
+            print(f"   Raw output: {preview_content(response.content)}")
             
             # Create default Verdict
             process_trace = ProcessTrace(
@@ -297,28 +288,23 @@ class GeneratorAgent:
     
     def _fallback_execute(self, claim_text: str) -> Verdict:
         """Fallback to original single-Agent mode"""
-        
+        now = datetime.now().astimezone()
+
         # Also use brief summary in fallback mode to reduce token usage
         rules_summary = self.playbook_manager.get_rules_brief_summary()
         
         prompt_text = GENERATOR_PROMPT.format(
             rules_summary=rules_summary,
-            input=claim_text
+            input=claim_text,
+            execution_timestamp=now.isoformat(timespec="seconds"),
+            current_date=now.date().isoformat()
         )
         
         print("AgentA (Single-Agent Mode) is analyzing...")
         response = self.llm.invoke(prompt_text)
         
         try:
-            content = response.content
-            
-            if "```json" in content:
-                json_str = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                json_str = content.split("```")[1].split("```")[0].strip()
-            else:
-                json_str = content.strip()
-            
+            json_str = extract_json_text(response.content)
             verdict_data = json.loads(json_str)
             
             if not verdict_data.get("case_id"):

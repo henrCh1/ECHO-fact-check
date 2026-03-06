@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
 ![Python](https://img.shields.io/badge/python-3.10+-green)
 ![License](https://img.shields.io/badge/license-MIT-orange)
 
@@ -13,6 +13,21 @@
 </div>
 
 ---
+
+## Changelog
+
+### v2.0.0
+
+- Added a human-in-the-loop evolution workflow with a `PendingBuffer` that batches 3 evolving-mode cases before requesting feedback.
+- Introduced dual rule status labels: `Verified` for trusted rules and `Trial` for feedback-generated rules that remain visible in prompts and UI.
+- Added batched review APIs and frontend review modal so users can mark verdict correctness and reasoning correctness for buffered cases.
+- Rewired evolving mode to buffer cases first and run supervised `WarmupReflector -> Curator -> apply_update` only after user feedback is submitted.
+- Exposed `Trial/Verified` rule badges in the playbook and result pages.
+- Improved Gemini compatibility by normalizing non-string `response.content` payloads returned by newer Gemini models.
+- Added explicit execution-time grounding to prompts so recent claims are judged against the runtime date instead of the model's assumed year.
+- Added frontend runtime settings for Gemini API Key and model name, backed by a new `/api/settings` endpoint that persists to `.env`.
+- Changed the default Gemini model to `gemini-3-flash-preview`.
+- Upgraded the public system version from `1.0.0` to `2.0.0`.
 
 ## 📖 Overview
 
@@ -104,7 +119,7 @@ Create a `.env` file with the following:
 
 ```env
 GOOGLE_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3-flash-preview
 ```
 
 ---

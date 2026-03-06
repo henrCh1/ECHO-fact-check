@@ -175,19 +175,21 @@ class PlaybookManager:
         if detection_active:
             summary += "## [DETECTION MEMORY] Rules for Identifying False Information\\n\\n"
             for rule in detection_active:
-                summary += f"[{rule.rule_id}] ({rule.type})\\n"
+                summary += f"[{rule.rule_id}] ({rule.type}, {rule.rule_status.upper()})\\n"
                 summary += f"- Condition: {rule.condition}\\n"
                 summary += f"- Action: {rule.action}\\n"
                 summary += f"- Confidence: {rule.confidence:.2f}\\n"
+                summary += f"- Status: {rule.rule_status}\\n"
                 summary += f"- Description: {rule.description}\\n\\n"
         
         if trust_active:
             summary += "## [TRUST MEMORY] Rules for Identifying True Information\\n\\n"
             for rule in trust_active:
-                summary += f"[{rule.rule_id}] ({rule.type})\\n"
+                summary += f"[{rule.rule_id}] ({rule.type}, {rule.rule_status.upper()})\\n"
                 summary += f"- Condition: {rule.condition}\\n"
                 summary += f"- Action: {rule.action}\\n"
                 summary += f"- Confidence: {rule.confidence:.2f}\\n"
+                summary += f"- Status: {rule.rule_status}\\n"
                 summary += f"- Description: {rule.description}\\n\\n"
         
         return summary
@@ -213,13 +215,13 @@ class PlaybookManager:
         if detection_active:
             summary += "## [DETECTION MEMORY] - Rules for identifying FALSE information\n\n"
             for rule in detection_active:
-                summary += f"- **{rule.rule_id}** [{rule.type}] (confidence: {rule.confidence:.2f})\n"
+                summary += f"- **{rule.rule_id}** [{rule.type}] [{rule.rule_status.upper()}] (confidence: {rule.confidence:.2f})\n"
                 summary += f"  {rule.description}\n\n"
         
         if trust_active:
             summary += "## [TRUST MEMORY] - Rules for identifying TRUE information\n\n"
             for rule in trust_active:
-                summary += f"- **{rule.rule_id}** [{rule.type}] (confidence: {rule.confidence:.2f})\n"
+                summary += f"- **{rule.rule_id}** [{rule.type}] [{rule.rule_status.upper()}] (confidence: {rule.confidence:.2f})\n"
                 summary += f"  {rule.description}\n\n"
         
         return summary
@@ -265,11 +267,11 @@ class PlaybookManager:
         detail = f"# Selected Rules Detail ({len(selected_rules)} rules)\n\n"
         
         for rule in selected_rules:
-            detail += f"## [{rule.rule_id}] {rule.type.upper()} ({rule.memory_type.upper()} MEMORY)\n\n"
+            detail += f"## [{rule.rule_id}] {rule.type.upper()} ({rule.memory_type.upper()} MEMORY | {rule.rule_status.upper()})\n\n"
             detail += f"**Description**: {rule.description}\n\n"
             detail += f"**Condition**: {rule.condition}\n\n"
             detail += f"**Action**: {rule.action}\n\n"
-            detail += f"**Confidence**: {rule.confidence:.2f} | **Evidence Count**: {rule.evidence_count}\n\n"
+            detail += f"**Confidence**: {rule.confidence:.2f} | **Evidence Count**: {rule.evidence_count} | **Status**: {rule.rule_status}\n\n"
             detail += "---\n\n"
         
         return detail
